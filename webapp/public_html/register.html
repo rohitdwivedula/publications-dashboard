@@ -1,23 +1,4 @@
 <!DOCTYPE html>
-<?php
-    if($_SERVER['REQUEST_METHOD'] == "POST"){
-    	$name = $_POST['name'];
- 		require_once("./utilities/create_user.php");
- 		$user = createUser($name, $email, $key);
- 		if(strcmp($user, "ALREADY_EXISTS") == 0){
- 		    header("Location: index.html?error=already_exists");
- 			exit();
- 		}
-        elseif(strcmp($user, "ERROR") == 0){
-            header("Location: index.html?error=yes");
-            exit();
-        }
-        elseif($user){
-            header("Location: index.html?success=account_created");
-            exit();
-        }
-	}
-?>
 <html>
     <head>
         <title> BITS Research Portal </title>
@@ -85,49 +66,27 @@
                 color: darkgreen;
                 text-decoration: none;
             }
-    
+            
+            table {
+              font-family: arial, sans-serif;
+              border-collapse: collapse;
+              width: 60%;
+            }
+            td, th {
+              border: 1px solid #dddddd;
+              text-align: left;
+              padding: 8px;
+            }
+
+            tr:nth-child(even) {
+              background-color: #dddddd;
+            }
         </style>
 
     </head>
     
     <body>
         <div id="wrapper">
-            <main>
-                <div id="content">
-                    <div class="innertube">
-                        <i>Page last refreshed <?php echo date("F d, Y H:i:s");?></i>
-                        <h1>BITS R&D Publications System</h1>
-                        <?php
-                            if(isset($_GET["error"])){
-                                if($_GET["error"] == "not_match"){
-                                    $message = "Your key and confirm key do not match.";
-                                }
-                                elseif($_GET["error"] == "notexists"){
-                                    $message = "The account ID you've entered does not exist.";
-                                }
-                                else{
-                                    $message = "An unexpected error was experienced.";
-                                }
-                                echo "<div class='error'>$message</div>";
-                                unset($_GET["error"]);
-                            }
-                        ?>
-                    </div>
-                <center><div id = "register">
-                    <form method="post" style="text-align: left;" action="<?php echo $_SERVER["PHP_SELF"];?>">
-                        <center>
-                        <input type="text" name="id" maxlength="255" placeholder="Find user-id" id="inputId">
-                        <br>
-                        <input type="submit" value="Submit">
-                        </center>
-                    </form>
-                    <h2>List of users</h2>
-                </div></center>
-                </div>
-
-                
-            </main>
-            
             <nav id="nav">
                 <div class="innertube">
                     <h3>About</h3>
@@ -135,7 +94,79 @@
                     <br>
                 </div>
             </nav>
-            
+            <main>
+                <div id="content">
+                    <div class="innertube">
+                        <i>Page last refreshed <?php echo date("F d, Y H:i:s");?></i>
+                        <h1>BITS R&D Publications System</h1>
+                        <center>
+                            <form method="get" style="text-align: left;" action="<?php echo $_SERVER["PHP_SELF"];?>">
+                                <center>
+                                <input type="text" name="name" maxlength="255" placeholder="Enter name" id="nameInput">
+                                <br>
+                                <input type="submit" value="Submit">
+                                </center>
+                            </form>
+                            <h2>List of users</h2>
+                            <?php
+                                require_once("./utilities/db_connection.php");
+                                if(isset($_GET["name"])){
+                                    $name = $_GET["name"];
+                                    $query = "SELECT researcher_id, name, citations FROM Researcher WHERE name LIKE '%$name%' LIMIT 30;";
+                                    $result = getResult($query);
+                                    if($result && mysqli_num_rows($result) != 0){
+                                        echo "<table>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Name</th>
+                                                <th>Citations</th>
+                                            </tr>";
+                                        while($row = mysqli_fetch_array($result)){
+                                             $r_id = $row["researcher_id"];
+                                             $r_name = $row["name"];
+                                             $r_citations = $row["citations"];
+                                             echo "<tr>
+                                                <td>$r_id</td>
+                                                <td>$r_name</td>
+                                                <td>$r_citations</td>";
+                                        }
+                                    }
+                                    else {
+                                        $message = "No results found matching $name";
+                                        echo "<div class='error'>$message</div>";
+                                    }
+                                    
+                                }
+                                else{
+                                    $query = "SELECT researcher_id, name, citations FROM Researcher LIMIT 20;";
+                                    $result = getResult($query);
+                                    if($result && mysqli_num_rows($result) != 0){
+                                        echo "<table>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Name</th>
+                                                <th>Citations</th>
+                                            </tr>";
+                                        while($row = mysqli_fetch_array($result)){
+                                             $r_id = $row["researcher_id"];
+                                             $r_name = $row["name"];
+                                             $r_citations = $row["citations"];
+                                             echo "<tr>
+                                                <td>$r_id</td>
+                                                <td>$r_name</td>
+                                                <td>$r_citations</td>";
+                                        }
+                                    }
+                                    else {
+                                        $message = "No results found.";
+                                        echo "<div class='error'>$message</div>";
+                                    }
+                                }
+                            ?>
+                        </center>
+                    </div>
+                </div>
+            </main>
         </div>
     </body>
 </html>

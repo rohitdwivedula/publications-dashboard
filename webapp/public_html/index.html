@@ -83,7 +83,6 @@ if($_SERVER['REQUEST_METHOD'] === "POST"){
     
     <body>
         <div id="wrapper">
-        
             <main>
                 <div id="content">
                     <div class="innertube">
@@ -128,9 +127,9 @@ if($_SERVER['REQUEST_METHOD'] === "POST"){
                         <center>
                         	<div id = "login">
 	                    		<form method="post" action="<?php echo $_SERVER["PHP_SELF"];?>">
-			                        <label for="email">Email:</label>
+			                        <label for="id">Researcher ID:</label>
 			                        <input type="text" name="email" id="inputEmail">
-			                        <label for="key">Key:</label>
+			                        <label for="key">Password:</label>
 			                        <input type="password" name="key" id="inputKey">
 			                        <input type="submit" value="Submit">
 	                   			 </form>

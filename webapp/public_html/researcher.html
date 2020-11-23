@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <?php
 session_start();
-$set = isset($_SESSION["name"]) && isset($_SESSION["email"]);
+$set = isset($_SESSION["name"]) && isset($_SESSION["id"]);
 if(!$set){
     session_destroy();
     header("Location: index.html?error=timed_out");
@@ -18,7 +18,7 @@ if($_SERVER['REQUEST_METHOD'] === POST){
 ?>
 <html>
     <head>
-        <title> Marks Portal </title>
+        <title> BITS Research Portal </title>
         <style type="text/css">
 
             body{
@@ -108,8 +108,8 @@ if($_SERVER['REQUEST_METHOD'] === POST){
                 <div class="content">
                     <div class="innertube">
                     	<i>Page last refreshed <?php echo date("F d, Y H:i:s");?></i>
-                        <h1>Student Verified Marks Reporting System</h1>
-                        <h2>Marks and Grades</h2>
+                        <h1>BITS R&D Publications System</h1>
+                        <h2>Your Publications</h2>
                         <?php
                             if(isset($_GET["success"])){
                                 if($_GET["success"] == "no"){
@@ -117,20 +117,19 @@ if($_SERVER['REQUEST_METHOD'] === POST){
                                 }
                             }
                         ?>
-                        You can validate your marks and grades here. Press the verify button if the marks entered in the database are correct. (note that this cannot be undone.)
+                        Manage all your academic publications here (note that actions done here cannot be undone).
                         <?php
                             require_once("./utilities/db_connection.php");
-                            $email = $_SESSION["email"];
-                            $query = "SELECT marks.record_number, marks.user_email, eval.max_marks, eval.eval_id, marks.score, marks.verified, eval.eval_name, eval.date_of_eval FROM marks LEFT JOIN eval ON marks.eval_id = eval.eval_id WHERE marks.user_email='$email';";
+                            $id = $_SESSION["id"];
+                            $query = "";
                             $result = getResult($query);
                             if($result && mysqli_num_rows($result) != 0){
                                 echo "<table>
                                     <tr>
-                                        <th>Eval Name</th>
-                                        <th>Date</th>
-                                        <th>Your Score</th>
-                                        <th>Max Marks</th>
-                                        <th>Verify</th>
+                                        <th>Publication ID</th>
+                                        <th>Title</th>
+                                        <th>Year</th>
+                                        <th>Citations</th>
                                     </tr>";
                                 while($row = mysqli_fetch_array($result)){
                                     $eval_name = $row["eval_name"];
@@ -173,7 +172,7 @@ if($_SERVER['REQUEST_METHOD'] === POST){
             <nav id="nav">
                 <div class="innertube">
                     <h3>Welcome!</h3>
-                    <p>Hello <?php echo $_SESSION["name"]?>! Your registered email is <?php echo $_SESSION["email"]?>. Have a nice day!</p>
+                    <p>Hello <b><?php echo $_SESSION["name"]?></b>! Your researcher ID is <?php echo $_SESSION["id"]?>. Have a nice day!</p>
                 </div>
             </nav>
             
