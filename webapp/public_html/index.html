@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<?php
+if($_SERVER['REQUEST_METHOD'] === "POST"){
+    require_once("./utilities/authenticate.php");
+    authenticate($_POST["email"], $_POST["key"]);
+}
+?>
+<html>
+    <head>
+        <title> BITS Research Portal </title>
+        <style type="text/css">
+
+            body{
+                margin:0;
+                padding:0;
+                font-family: Sans-Serif;
+                line-height: 1.5em;
+            }
+            
+            main {
+                padding-bottom: 10010px;
+                margin-bottom: -10000px;
+                float: left;
+                width: 100%;
+            }
+            
+            #nav {
+                float: left;
+                width: 230px;
+                margin-left: -100%;
+                padding-bottom: 10010px;
+                margin-bottom: -10000px;
+                background: #eee;
+            }
+            
+            #wrapper {
+                overflow: hidden;
+            }
+            
+            #content {
+                margin-left: 230px; /* Same as 'nav' width */
+            }
+            
+            .innertube{
+                margin: 15px; /* Padding for content */
+                margin-top: 0;
+            }
+
+            .error {
+                padding-top: 7px;
+                padding-bottom: 7px;
+                background-color:  #ff9999;
+                color: black;
+                text-align: center;
+            }
+
+            .success {
+                padding-top: 7px;
+                padding-bottom: 7px;
+                background-color:  #009900;
+                color: black;
+                text-align: center;
+            }
+            
+            p {
+                color: #555;
+            }
+    
+            nav ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            
+            nav ul a {
+                color: darkgreen;
+                text-decoration: none;
+            }
+    
+        </style>
+
+    </head>
+    
+    <body>
+        <div id="wrapper">
+        
+            <main>
+                <div id="content">
+                    <div class="innertube">
+                        <i>Page last refreshed <?php echo date("F d, Y H:i:s");?></i>
+                        <h1>BITS R&D Publications System</h1>
+                        <?php
+                            if(isset($_GET["error"])){
+                                if($_GET["error"] == "incorrect"){
+                                    $message = "Your username and/or key are incorrect";
+                                }
+                                elseif($_GET["error"] == "timed_out"){
+                                    $message = "Your session has timed out. Please login again.";
+                                }
+                                elseif($_GET["error"] == "already_exists"){
+                                    $message = "An account with that email already exists.";
+                                }
+                                elseif($_GET["error"] == "notexists"){
+                                    $message = "The account ID you've entered does not exist.";
+                                }
+                                else{
+                                    $message = "An unexpected error was experienced.";
+                                }
+                                echo "<div class='error'>$message</div>";
+                            }
+                        ?>
+                        <?php
+                            if(isset($_GET["success"])){
+                                if($_GET["success"] == "account_created"){
+                                    $message = "Your account was successfully created";
+                                }
+                                if(isset($message)){
+                                    echo "<div class='success'>$message</div>";
+                                }
+                            }
+                        ?>
+                        <p> Welcome! This portal is aimed at providing an interface to manage your publications and research activities. Through this, you can view papers that have been autoindexed via Google Scholar, merge duplicate papers, and add new papers that might not already be in the index. All data updates here are automatically updated in PowerBi. Please ensure to: 
+                        <ol>
+                            <li>Keep your password safe - anyone with access to that can modify your profile.</li> 
+                            <li>Statistics and aggregates can be seen on PowerBi.</li>
+                        </ol>
+                        </p>
+                        <center>
+                        	<div id = "login">
+	                    		<form method="post" action="<?php echo $_SERVER["PHP_SELF"];?>">
+			                        <label for="email">Email:</label>
+			                        <input type="text" name="email" id="inputEmail">
+			                        <label for="key">Key:</label>
+			                        <input type="password" name="key" id="inputKey">
+			                        <input type="submit" value="Submit">
+	                   			 </form>
+	                		</div>
+	                	</center>
+	                    <p>Forgot your user ID? <a href="/register.html">Find it here</a>.</p>
+                    </div>
+                </div>                
+            </main>
+            
+            <nav id="nav">
+                <div class="innertube">
+                    <h3>About</h3>
+                    One portal to bring all your publication related in the same place. Please keep your secret key safe. 
+                    <br>
+                </div>
+            </nav>
+            
+        </div>
+    </body>
+</html>

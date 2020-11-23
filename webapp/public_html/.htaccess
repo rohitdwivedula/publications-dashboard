@@ -1,0 +1,3 @@
+Options -Indexes
+Redirect 301 /main.html /index.html
+ErrorDocument 404 /404.html
